@@ -1,4 +1,6 @@
-# Add this query for explore
+# Explore ecommerce data
+
+# Question: Out of the total visitors who visited our website, what % made a purchase?
 
 WITH visitors AS(
 SELECT
@@ -19,7 +21,7 @@ FROM visitors, purchasers
 
 # The result: 2.69%
 
-#The top 5 selling products
+# Question: What are the top 5 selling products?
 
 SELECT
   p.v2ProductName,
@@ -33,7 +35,8 @@ GROUP BY 1, 2
 ORDER BY revenue DESC
 LIMIT 5;
 
-# Visitors who bought on a return visit (could have bought on first as well
+# Question: How many visitors bought on subsequent visits to the website?
+
 WITH all_visitor_stats AS (
 SELECT
   fullvisitorid, # 741,721 unique visitors
@@ -49,7 +52,6 @@ GROUP BY will_buy_on_return_visit
 
 # Create a model and specify model options
 
-#standardSQL
 CREATE OR REPLACE MODEL `ecommerce.classification_model`
 OPTIONS
 (
@@ -83,7 +85,6 @@ FROM
 
 # Evaluate how well the model performs with this query using ML.EVALUATE.
 
-#standardSQL
 SELECT
   roc_auc,
   CASE
@@ -119,7 +120,6 @@ FROM
 
 # Craete this second model 
 
-#standardSQL
 CREATE OR REPLACE MODEL `ecommerce.classification_model_2`
 OPTIONS
   (model_type='logistic_reg', labels = ['will_buy_on_return_visit']) AS
@@ -171,7 +171,6 @@ SELECT * EXCEPT(unique_session_id) FROM (
 
 # Evaluate this new model to see if there is better predictive power.
 
-#standardSQL
 SELECT
   roc_auc,
   CASE
@@ -231,7 +230,6 @@ SELECT * EXCEPT(unique_session_id) FROM (
 
 # Predict which new visitors will come back and make a purchase.
 
-#standardSQL
 SELECT
 *
 FROM
